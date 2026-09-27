@@ -23,23 +23,15 @@ export const GisMap: React.FC<GisMapProps> = ({ onSelectWard }) => {
   const [activeLayer, setActiveLayer] = useState<string>('risk');
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Read CARTO API key from environment variable
+  // CARTO is optional; the public OpenStreetMap tiles work without credentials.
   const cartoApiKey = import.meta.env.VITE_CARTO_API_KEY;
-  const isKeyAvailable = cartoApiKey && cartoApiKey !== 'YOUR_CARTO_KEY';
-
-  useEffect(() => {
-    if (!isKeyAvailable) {
-      console.warn(
-        '[HEATGUARD GIS Warning] VITE_CARTO_API_KEY is not defined or is set to placeholder in frontend/.env. ' +
-        'Please paste your real CARTO API key into frontend/.env as VITE_CARTO_API_KEY=YOUR_KEY to enable authenticated CARTO Dark Matter raster tiles.'
-      );
-    }
-  }, [isKeyAvailable]);
-
-  // Construct tile URL dynamically based on environment key configuration
-  const tileUrl = isKeyAvailable
+  const hasCartoApiKey = Boolean(cartoApiKey && cartoApiKey !== 'YOUR_CARTO_KEY');
+  const tileUrl = hasCartoApiKey
     ? `https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoApiKey}`
-    : `https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png`;
+    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const tileAttribution = hasCartoApiKey
+    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
   useEffect(() => {
     Promise.all([
@@ -185,9 +177,9 @@ export const GisMap: React.FC<GisMapProps> = ({ onSelectWard }) => {
           style={{ width: '100%', height: '100%' }}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            attribution={tileAttribution}
             url={tileUrl}
-            maxZoom={20}
+            maxZoom={hasCartoApiKey ? 20 : 19}
           />
 
           {geoJsonData && (

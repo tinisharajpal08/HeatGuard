@@ -11,6 +11,7 @@ env/
 *.sqlite-shm
 *.sqlite-wal
 *.log
+frontend/.env.local
 
 # Editor and OS files
 .vscode/
