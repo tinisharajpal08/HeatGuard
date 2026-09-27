@@ -107,6 +107,17 @@ This repository is a monorepo with separate Render services defined in `render.y
 
 Set `VITE_API_BASE_URL` to the backend service URL. The map works without a CARTO credential by using public OpenStreetMap tiles; optionally set `VITE_CARTO_API_KEY` on the frontend service to use CARTO Dark Matter tiles. Optional backend variables are `IMD_API_KEY`, `IMD_API_URL`, and `ERA5_DATA_DIR`.
 
+### Deploy the frontend on Netlify
+
+The repository includes a root-level `netlify.toml` configured for the Vite app in `frontend/`. Connect the repository to Netlify and deploy with the detected settings; the configuration builds the frontend and serves `dist/` with a single-page-app fallback.
+
+The FastAPI backend must be deployed separately because Netlify hosts the static frontend, not this persistent Python API. For example, deploy the backend using the Backend Web Service in `render.yaml`, then add the following in **Netlify → Site configuration → Environment variables**:
+
+- `VITE_API_BASE_URL`: the deployed backend's public URL (for example, `https://your-heatguard-api.onrender.com`).
+- `VITE_CARTO_API_KEY` (optional): a CARTO API key for Dark Matter map tiles.
+
+`VITE_API_BASE_URL` is embedded into the frontend at build time, so trigger a new deploy after changing it. For local development, leave it empty to use the Vite proxy.
+
 ---
 
 ## Interactive Judging Scenario Instructions
