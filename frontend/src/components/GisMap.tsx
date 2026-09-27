@@ -23,16 +23,6 @@ export const GisMap: React.FC<GisMapProps> = ({ onSelectWard }) => {
   const [activeLayer, setActiveLayer] = useState<string>('risk');
   const [loading, setLoading] = useState<boolean>(true);
 
-  // CARTO is optional; the public OpenStreetMap tiles work without credentials.
-  const cartoApiKey = import.meta.env.VITE_CARTO_API_KEY;
-  const hasCartoApiKey = Boolean(cartoApiKey && cartoApiKey !== 'YOUR_CARTO_KEY');
-  const tileUrl = hasCartoApiKey
-    ? `https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoApiKey}`
-    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  const tileAttribution = hasCartoApiKey
-    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-    : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
   useEffect(() => {
     Promise.all([
       apiFetch('/api/wards/geojson').then(res => res.json()),
@@ -176,10 +166,11 @@ export const GisMap: React.FC<GisMapProps> = ({ onSelectWard }) => {
           scrollWheelZoom={true}
           style={{ width: '100%', height: '100%' }}
         >
+          {/* CARTO credentials may be configured as a backup, but this map always uses OpenStreetMap. */}
           <TileLayer
-            attribution={tileAttribution}
-            url={tileUrl}
-            maxZoom={hasCartoApiKey ? 20 : 19}
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19}
           />
 
           {geoJsonData && (

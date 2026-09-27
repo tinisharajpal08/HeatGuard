@@ -105,7 +105,7 @@ This repository is a monorepo with separate Render services defined in `render.y
 - **Backend Web Service**: root directory `backend`; build command `pip install -r requirements.txt`; start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
 - **Frontend Static Site**: root directory `frontend`; build command `npm ci && npm run build`; publish directory `dist`; no start command.
 
-Set `VITE_API_BASE_URL` to the backend service URL. The map works without a CARTO credential by using public OpenStreetMap tiles; optionally set `VITE_CARTO_API_KEY` on the frontend service to use CARTO Dark Matter tiles. Optional backend variables are `IMD_API_KEY`, `IMD_API_URL`, and `ERA5_DATA_DIR`.
+Set `VITE_API_BASE_URL` to the backend service URL. The map always uses public OpenStreetMap tiles and does not require a map API key. `VITE_CARTO_API_KEY` is retained in the frontend environment example as a backup for a possible future basemap option; it does not change the active map tiles. Optional backend variables are `IMD_API_KEY`, `IMD_API_URL`, and `ERA5_DATA_DIR`.
 
 ---
 
